@@ -5,4 +5,4 @@ supervision~=0.1.0
 pyserial
 pyqt6
 torch
-pygrabber
+cv2_enumerate_cameras

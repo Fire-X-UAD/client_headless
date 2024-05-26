@@ -10,12 +10,10 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QLabel, QPushButton,
     QVBoxLayout, QWidget, QMessageBox
 )
-from pygrabber.dshow_graph import FilterGraph
-
 from supervision.draw.color import ColorPalette
 from supervision.tools.detections import Detections, BoxAnnotator
-
 import argparse
+from cv2_enumerate_cameras import enumerate_cameras
 
 # UDP Server setup
 UDP_IP = "127.0.0.1"
@@ -316,13 +314,9 @@ class CameraSelectionWindow(QMainWindow):
             self.resolution_combo.setCurrentText('1280x720')
             self.model_combo.setCurrentText('1_depan.pt')
             self.resolution_combo.setEnabled(True)
-            
-
-    
+        
     def list_cameras(self):
-        graph = FilterGraph()
-        cameras = graph.get_input_devices()
-        for index, name in enumerate(cameras):
+        for index, name in enumerate(list_cameras_ext()):
             self.camera_combo.addItem(f'{name} (Kamera {index})')
 
     def list_models(self):
@@ -345,11 +339,13 @@ class CameraSelectionWindow(QMainWindow):
         self.detection_thread.start()
         self.close()
 
+def list_cameras_ext():
+    return list(enumerate_cameras(cv2.CAP_DSHOW if os.name == 'nt' else cv2.CAP_V4L2))  
 
 def headless():
     # ask for camera index
     print("Pilih Kamera: ")
-    for index, name in enumerate(FilterGraph().get_input_devices()):
+    for index, name in enumerate(list_cameras_ext()):
         print(f"{index}: {name}")
     camera_index = int(input("Masukkan indeks kamera: "))
     print("Pilih Mode: ")
