@@ -49,7 +49,7 @@ class HeadlessClient:
         """
         # Search for Arduino port
         for port in serial.tools.list_ports.comports():
-            if "Arduino" in port.manufacturer:
+            if "Arduino" in port.manufacturer or "Microsoft" in port.manufacturer:
                 return port.device
         return None
 
@@ -262,7 +262,7 @@ class HeadlessClient:
             try:
                 if self.standalone_mode and self.arduino_port and self.arduino_port.is_open:
                     vision_data = self.data_vision if self.vision_socket else "-1"
-                    self.arduino_port.write(f"-1;-1;-1;-1;-1;-1;-1;{vision_data}#".encode())
+                    self.arduino_port.write(f"1;-1;-1;-1;-1;-1;-1;{vision_data}#".encode())
             except Exception as e:
                 print(f"Error sending standalone data to Arduino: {e}")
 
